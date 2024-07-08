@@ -40,8 +40,9 @@ about:
   summary: Access Kaggle resources anywhere
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
   dev_url: https://github.com/Kaggle/kagglehub
-  doc_url: https://www.kaggle.com/docs
+  doc_url: https://github.com/Kaggle/kagglehub/blob/main/README.md
 
 extra:
   recipe-maintainers:
