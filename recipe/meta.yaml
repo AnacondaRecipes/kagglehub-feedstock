@@ -10,17 +10,17 @@ source:
   sha256: 5d20a3b9aa851ca56dd09c57bb6d790cbe331e3e4d4c86e8a16575c9400071b6
 
 build:
-  noarch: python
-  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  script:  {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   number: 0
+  skip: True  # [py<37]
 
 requirements:
   host:
-    - python >=3.7
+    - python
     - hatchling
     - pip
   run:
-    - python >=3.7
+    - python
     - requests
     - tqdm
     - packaging
@@ -35,9 +35,14 @@ test:
 
 about:
   home: https://github.com/Kaggle/kagglehub
+  description: |
+    KaggleHub is a Python package that provides a simple API to access Kaggle resources anywhere.
   summary: Access Kaggle resources anywhere
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
+  dev_url: https://github.com/Kaggle/kagglehub
+  doc_url: https://github.com/Kaggle/kagglehub/blob/main/README.md
 
 extra:
   recipe-maintainers:
