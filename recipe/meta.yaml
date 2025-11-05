@@ -10,9 +10,9 @@ source:
   sha256: d3c8b6250627d665096cd91a9487559bf5ed61be607eaf63d14511b20eea646e
 
 build:
-  script:  {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   number: 0
-  skip: True  # [py<39]
+  skip: true  # [py<39]
 
 requirements:
   host:
@@ -25,6 +25,9 @@ requirements:
     - tqdm
     - packaging
     - pyyaml
+  run_constrained:
+    - sigstore >=3.6.1
+    - betterproto >=2.0.0b6
 
 # Missed modules: jwt, model_signing, fastexcel
 {% set ignored_tests = [
