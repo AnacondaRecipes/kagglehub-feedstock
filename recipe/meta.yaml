@@ -1,18 +1,18 @@
 {% set name = "kagglehub" %}
-{% set version = "0.2.7" %}
+{% set version = "0.3.13" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/kagglehub-{{ version }}.tar.gz
-  sha256: 5d20a3b9aa851ca56dd09c57bb6d790cbe331e3e4d4c86e8a16575c9400071b6
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: d3c8b6250627d665096cd91a9487559bf5ed61be607eaf63d14511b20eea646e
 
 build:
   script:  {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   number: 0
-  skip: True  # [py<37]
+  skip: True  # [py<39]
 
 requirements:
   host:
@@ -24,14 +24,28 @@ requirements:
     - requests
     - tqdm
     - packaging
+    - pyyaml
 
+# Missed modules: jwt, model_signing, fastexcel
+{% set ignored_tests = [
+  "--ignore=tests/test_kaggle_token_auth.py",
+  "--ignore=tests/test_model_upload.py",
+  "--ignore=tests/test_dataset_load.py"
+]%}
 test:
+  source_files:
+    - tests
+    - pyproject.toml
   imports:
     - kagglehub
   commands:
     - pip check
+    - pytest -v  {{ ignored_tests | join(" ")}}
   requires:
     - pip
+    - pytest
+    - flask
+    - polars
 
 about:
   home: https://github.com/Kaggle/kagglehub
