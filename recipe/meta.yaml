@@ -35,6 +35,14 @@ requirements:
   "--ignore=tests/test_model_upload.py",
   "--ignore=tests/test_dataset_load.py"
 ]%}
+# E PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
+# NotADirectoryError: [WinError 267] The directory name is invalid
+{% set ignored_tests_win = [
+  "--ignore=tests/test_http_competition_download.py",
+  "--ignore=tests/test_http_dataset_download.py",
+  "--ignore=tests/test_http_model_download.py",
+  "--ignore=tests/test_logger.py"
+]%}
 test:
   source_files:
     - tests
@@ -43,7 +51,8 @@ test:
     - kagglehub
   commands:
     - pip check
-    - pytest -v  {{ ignored_tests | join(" ")}}
+    - pytest -v  {{ ignored_tests | join(" ")}} # [not win]
+    - pytest -v  {{ ignored_tests | join(" ")}} {{ ignored_tests_win | join(" ")}} # [win]
   requires:
     - pip
     - pytest
