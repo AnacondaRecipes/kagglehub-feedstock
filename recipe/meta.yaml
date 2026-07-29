@@ -1,22 +1,8 @@
 {% set name = "kagglehub" %}
 {% set version = "1.0.2" %}
-{% set ignored_tests = [
-  "--ignore=tests/test_kaggle_token_auth.py",
-  "--ignore=tests/test_model_upload.py",
-  "--ignore=tests/test_dataset_load.py"
-] %}
-{% set ignored_tests_win = [
-  "--ignore=tests/test_http_competition_download.py",
-  "--ignore=tests/test_http_dataset_download.py",
-  "--ignore=tests/test_http_model_download.py",
-  "--ignore=tests/test_logger.py"
-] %}
 
-# Missed modules: jwt, model_signing, fastexcel
-# E PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
-# NotADirectoryError: [WinError 267] The directory name is invalid
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
@@ -41,8 +27,24 @@ requirements:
     - pyyaml
     - kagglesdk >=0.1.22,<1.0
   run_constrained:
+    # signing
     - sigstore >=3.6.1
     - betterproto >=2.0.0b6
+
+# Missed modules: jwt, model_signing, fastexcel
+# E PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
+# NotADirectoryError: [WinError 267] The directory name is invalid
+{% set ignored_tests = [
+  "--ignore=tests/test_kaggle_token_auth.py",
+  "--ignore=tests/test_model_upload.py",
+  "--ignore=tests/test_dataset_load.py"
+] %}
+{% set ignored_tests_win = [
+  "--ignore=tests/test_http_competition_download.py",
+  "--ignore=tests/test_http_dataset_download.py",
+  "--ignore=tests/test_http_model_download.py",
+  "--ignore=tests/test_logger.py"
+] %}
 
 test:
   source_files:
