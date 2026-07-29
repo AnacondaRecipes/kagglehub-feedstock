@@ -1,18 +1,20 @@
 {% set name = "kagglehub" %}
-{% set version = "0.3.13" %}
+{% set version = "1.0.2" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name }}
   version: {{ version }}
 
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: d3c8b6250627d665096cd91a9487559bf5ed61be607eaf63d14511b20eea646e
+  sha256: 08abae0c1e249904003ce6f23c189166e3032220478426a552c77c2edb08b93a
 
 build:
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   number: 0
-  skip: true  # [py<39]
+  # kagglesdk is required py >= 3.11
+  # https://github.com/Kaggle/kaggle-sdk-python/blob/a208c160e632a211dcb8937a14552c3d28773648/pyproject.toml#L22
+  skip: true  # [py<311]
 
 requirements:
   host:
@@ -25,24 +27,30 @@ requirements:
     - tqdm
     - packaging
     - pyyaml
+    - kagglesdk >=0.1.22,<1.0
   run_constrained:
+    # signing
     - sigstore >=3.6.1
     - betterproto >=2.0.0b6
 
 # Missed modules: jwt, model_signing, fastexcel
+# E PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
+# NotADirectoryError: [WinError 267] The directory name is invalid
 {% set ignored_tests = [
   "--ignore=tests/test_kaggle_token_auth.py",
   "--ignore=tests/test_model_upload.py",
   "--ignore=tests/test_dataset_load.py"
-]%}
-# E PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
-# NotADirectoryError: [WinError 267] The directory name is invalid
+] %}
 {% set ignored_tests_win = [
   "--ignore=tests/test_http_competition_download.py",
   "--ignore=tests/test_http_dataset_download.py",
   "--ignore=tests/test_http_model_download.py",
   "--ignore=tests/test_logger.py"
-]%}
+] %}
+
+# E               kagglehub.exceptions.UnauthenticatedError: User is not authenticated
+{% set deselected_tests_win = " --deselect=tests/test_kaggle_cache_competition_download.py::TestKaggleCacheCompetitionDownload::test_kaggle_resolver_skipped" %}  # [win]
+
 test:
   source_files:
     - tests
@@ -51,8 +59,8 @@ test:
     - kagglehub
   commands:
     - pip check
-    - pytest -v  {{ ignored_tests | join(" ")}} # [not win]
-    - pytest -v  {{ ignored_tests | join(" ")}} {{ ignored_tests_win | join(" ")}} # [win]
+    - pytest -v  {{ ignored_tests | join(" ")}}  # [not win]
+    - pytest -v  {{ ignored_tests | join(" ")}} {{ ignored_tests_win | join(" ")}} {{ deselected_tests_win }} # [win]
   requires:
     - pip
     - pytest
