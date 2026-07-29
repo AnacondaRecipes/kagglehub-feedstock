@@ -48,6 +48,9 @@ requirements:
   "--ignore=tests/test_logger.py"
 ] %}
 
+# E               kagglehub.exceptions.UnauthenticatedError: User is not authenticated
+{% set deselected_tests_win = " --deselect=tests/test_kaggle_cache_competition_download.py::TestKaggleCacheCompetitionDownload::test_kaggle_resolver_skipped" %}  # [win]
+
 test:
   source_files:
     - tests
@@ -57,7 +60,7 @@ test:
   commands:
     - pip check
     - pytest -v  {{ ignored_tests | join(" ")}}  # [not win]
-    - pytest -v  {{ ignored_tests | join(" ")}} {{ ignored_tests_win | join(" ")}}  # [win]
+    - pytest -v  {{ ignored_tests | join(" ")}} {{ ignored_tests_win | join(" ")}} {{ deselected_tests_win }} # [win]
   requires:
     - pip
     - pytest
