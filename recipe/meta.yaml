@@ -12,7 +12,9 @@ source:
 build:
   script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation --ignore-installed --no-cache-dir -vv
   number: 0
-  skip: true  # [py<310]
+  # kagglesdk is required py >= 3.11
+  # https://github.com/Kaggle/kaggle-sdk-python/blob/a208c160e632a211dcb8937a14552c3d28773648/pyproject.toml#L22
+  skip: true  # [py<311]
 
 requirements:
   host:
